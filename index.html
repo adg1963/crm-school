@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Здоровый баланс — CRM онлайн-школы</title>
+<style>
+  :root {
+    --sber: #21A038;
+    --sber-dark: #1A8030;
+    --sber-light: #E8F5E9;
+    --sber-yellow: #FECB00;
+    --sber-grad: linear-gradient(135deg, #21A038 0%, #4CAF50 100%);
+    --dark: #1F2937;
+    --gray: #6B7280;
+    --gray-light: #E5E7EB;
+    --gray-bg: #F9FAFB;
+    --white: #FFFFFF;
+    --red: #EF4444;
+    --blue: #3B82F6;
+    --shadow: 0 4px 20px rgba(31,41,55,0.08);
+    --shadow-hover: 0 12px 40px rgba(31,41,55,0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background: var(--gray-bg);
+    color: var(--dark);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+
+  /* ШАПКА */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: var(--white);
+    box-shadow: 0 2px 12px rgba(31,41,55,0.06);
+    padding: 14px 30px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px solid var(--sber);
+  }
+  header .logo-row {
+    display: flex; align-items: center; gap: 12px;
+  }
+  header .logo-img {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(33,160,56,0.2);
+  }
+  header .logo-text {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--dark);
+  }
+  header .logo-text span { color: var(--sber); }
+  header .user-info {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--gray);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  header .user-info img {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--sber);
+  }
+  header .btn-header {
+    background: transparent;
+    border: 2px solid var(--sber);
+    color: var(--sber);
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+  }
+  header .btn-header:hover { background: var(--sber); color: var(--white); }
+
+  /* СЕТКА CRM */
+  .crm-layout {
+    display: flex;
+    min-height: 100vh;
+    padding-top: 70px;
+  }
+  .sidebar {
+    width: 260px;
+    background: var(--white);
+    border-right: 1px solid var(--gray-light);
+    padding: 24px 16px;
+    position: fixed;
+    top: 70px;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: transform 0.3s;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray);
+    cursor: pointer;
+    margin-bottom: 6px;
+    transition: all 0.25s;
+  }
+  .sidebar-item:hover {
+    background: var(--sber-light);
+    color: var(--sber-dark);
+  }
+  .sidebar-item.active {
+    background: var(--sber-grad);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(33,160,56,0.3);
+  }
+  .sidebar-item .icon { font-size: 20px; }
+
+  .main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 30px 40px;
+    min-height: calc(100vh - 70px);
+  }
+  .page-title {
+    font-size: 32px;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .page-sub {
+    color: var(--gray);
+    margin-bottom: 28px;
+  }
+  .page-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* КНОПКИ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+  }
+  .btn-primary {
+    background: var(--sber-grad);
+    color: var(--white);
+    box-shadow: 0 4px 14px rgba(33,160,56,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(33,160,56,0.4);
+  }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--gray-light);
+    color: var(--dark);
+  }
+  .btn-outline:hover { border-color: var(--sber); color: var(--sber); }
+  .btn-sm {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  .btn-danger {
+    background: var(--red);
+    color: var(--white);
+  }
+  .btn-danger:hover { background: #DC2626; }
+
+  /* КАРТОЧКИ */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    transition: all 0.35s;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); }
+
+  /* КАНБАН-ДОСКА */
+  .kanban {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+  }
+  .kanban-col {
+    background: var(--gray-bg);
+    border-radius: 12px;
+    padding: 14px;
+    min-height: 400px;
+    border-top: 4px solid var(--gray-light);
+    min-width: 260px;
+  }
+  .kanban-col[data-status="new"] { border-top-color: var(--blue); }
+  .kanban-col[data-status="progress"] { border-top-color: var(--sber-yellow); }
+  .kanban-col[data-status="paid"] { border-top-color: #8B5CF6; }
+  .kanban-col[data-status="studying"] { border-top-color: #F59E0B; }
+  .kanban-col[data-status="done"] { border-top-color: var(--sber); }
+  .kanban-col[data-status="cancelled"] { border-top-color: var(--red); }
+  .kanban-col h3 {
+    font-size: 14px;
+    color: var(--dark);
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .kanban-col h3 .count {
+    background: var(--white);
+    color: var(--gray);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .kanban-card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(31,41,55,0.06);
+    cursor: pointer;
+    transition: all 0.3s;
+    border-left: 4px solid var(--sber);
+    animation: fadeUp 0.4s ease;
+  }
+  .kanban-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(31,41,55,0.12);
+  }
+  .kanban-card .client { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .kanban-card .product { font-size: 13px; color: var(--gray); margin-bottom: 8px; }
+  .kanban-card .amount { font-size: 16px; font-weight: 700; color: var(--sber); margin-bottom: 8px; }
+  .kanban-card .meta {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--gray);
+    border-top: 1px dashed var(--gray-light);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+  .kanban-card .manager { display: flex; align-items: center; gap: 6px; }
+  .kanban-card .avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+  .kanban-card .comments-count {
+    display: flex; align-items: center; gap: 4px;
+    color: var(--sber);
+    font-weight: 600;
+  }
+</style>
+</head>
+
+<style>
+  /* ЭКРАН ВХОДА */
+  .login-screen {
+    position: fixed; inset: 0; z-index: 2000;
+    background: var(--sber-grad);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.4s ease;
+  }
+  .login-screen::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15), transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1), transparent 50%);
+  }
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 50px 44px;
+    max-width: 440px; width: 100%;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+    position: relative; z-index: 1;
+    animation: fadeUp 0.5s ease;
+  }
+  .login-card .logo-big {
+    width: 90px; height: 90px;
+    border-radius: 20px;
+    display: block;
+    margin: 0 auto 20px;
+    object-fit: cover;
+    box-shadow: 0 8px 24px rgba(33,160,56,0.3);
+  }
+  .login-card h1 {
+    font-size: 28px;
+    text-align: center;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .login-card .sub {
+    text-align: center;
+    color: var(--gray);
+    margin-bottom: 32px;
+    font-size: 15px;
+  }
+
+  /* ФОРМЫ */
+  .form-group { margin-bottom: 18px; }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--gray-light);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--dark);
+    background: var(--white);
+    transition: all 0.3s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--sber);
+    box-shadow: 0 0 0 4px rgba(33,160,56,0.12);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-actions {
+    display: flex; gap: 12px; margin-top: 24px;
+  }
+  .form-actions button { flex: 1; }
+  .form-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    border-top: 4px solid var(--sber);
+  }
+  .form-card h3 {
+    font-size: 20px;
+    color: var(--dark);
+    margin-bottom: 20px;
+  }
+
+  /* МОДАЛЬНЫЕ ОКНА */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(31,41,55,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1500;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 30px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    animation: fadeUp 0.3s ease;
+    margin: auto;
+  }
+  .modal-wide { max-width: 720px; }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--gray-light);
+  }
+  .modal-header h2 {
+    font-size: 24px;
+    color: var(--dark);
+  }
+  .modal-close {
+    background: transparent;
+    border: none;
+    font-size: 30px;
+    color: var(--gray);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 8px;
+    transition: color 0.3s;
+  }
+  .modal-close:hover { color: var(--red); }
+
+  /* КОММЕНТАРИИ */
+  .comment-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--gray-light);
+    animation: slideIn 0.3s ease;
+  }
+  .comment-item img {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .comment-body { flex: 1; }
+  .comment-body .author {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .comment-body .author .time {
+    font-weight: 400;
+    color: var(--gray);
+    font-size: 12px;
+    margin-left: 8px;
+  }
+  .comment-body .text {
+    color: var(--dark);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* СПИСКИ */
+  .list-item {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    transition: all 0.3s;
+  }
+  .list-item:hover { box-shadow: var(--shadow-hover); transform: translateX(4px); }
+  .list-item .info { flex: 1; min-width: 220px; }
+  .list-item .info h4 {
+    font-size: 17px;
+    color: var(--dark);
+    margin-bottom: 4px;
+  }
+  .list-item .info p {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .list-item .controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* СТАТУСЫ */
+  .status-badge {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-new { background: #DBEAFE; color: #1E40AF; }
+  .status-progress { background: #FEF3C7; color: #92400E; }
+  .status-paid { background: #EDE9FE; color: #6D28D9; }
+  .status-studying { background: #FFEDD5; color: #C2410C; }
+  .status-done { background: #D1FAE5; color: #065F46; }
+  .status-cancelled { background: #FEE2E2; color: #991B1B; }
+
+  /* ПРАВА ДОСТУПА */
+  .permissions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .perm-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--gray-bg);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .perm-check:hover { background: var(--sber-light); }
+  .perm-check input {
+    width: 20px; height: 20px;
+    accent-color: var(--sber);
+    cursor: pointer;
+  }
+
+  /* ЧАТ-СООБЩЕНИЯ */
+  .chat-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    height: calc(100vh - 180px);
+  }
+  .chat-list {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow-y: auto;
+  }
+  .chat-list-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--gray-light);
+    cursor: pointer;
+    transition: background 0.25s;
+  }
+  .chat-list-item:hover { background: var(--sber-light); }
+  .chat-list-item.active { background: var(--sber-light); border-left: 4px solid var(--sber); }
+  .chat-list-item .name { font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .chat-list-item .last-msg { font-size: 13px; color: var(--gray); }
+  .chat-list-item .channel { font-size: 12px; color: var(--sber); font-weight: 600; margin-top: 4px; }
+  .chat-window {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: var(--gray-bg);
+  }
+  .chat-msg {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    animation: fadeUp 0.3s ease;
+  }
+  .chat-msg.in {
+    background: var(--white);
+    color: var(--dark);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg.out {
+    background: var(--sber);
+    color: var(--white);
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-input-row {
+    display: flex;
+    padding: 14px;
+    border-top: 1px solid var(--gray-light);
+    gap: 10px;
+  }
+  .chat-input-row input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-light);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+  }
+  .chat-input-row input:focus {
+    outline: none;
+    border-color: var(--sber);
+  }
+
+  /* УВЕДОМЛЕНИЯ */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: var(--dark);
+    color: var(--white);
+    padding: 16px 30px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    z-index: 9999;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--sber); }
+  .toast.error { background: var(--red); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+    font-size: 16px;
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .burger {
+    display: none;
+    font-size: 26px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--dark);
+  }
+
+  @media (max-width: 1100px) {
+    .kanban { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .sidebar {
+      transform: translateX(-100%);
+      z-index: 999;
+      box-shadow: 0 0 40px rgba(0,0,0,0.2);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0; padding: 20px; }
+    .burger { display: block; }
+    .kanban { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .permissions-grid { grid-template-columns: 1fr; }
+    .chat-layout { grid-template-columns: 1fr; height: auto; }
+    .page-title { font-size: 24px; }
+    .modal { padding: 20px; }
+    header { padding: 12px 18px; }
+    header .logo-text { font-size: 16px; }
+  }
+</style>
+
+<body>
+
+<!-- ЭКРАН ВХОДА -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <img src="https://i.ibb.co/6cqML3XD/image.jpg" alt="Здоровый баланс" class="logo-big">
+    <h1>Здоровый баланс</h1>
+    <p class="sub">CRM онлайн-школы по питанию</p>
+    <div class="form-group">
+      <label>Логин</label>
+      <input type="text" id="loginInput" placeholder="Введите логин">
+    </div>
+    <div class="form-group">
+      <label>Пароль</label>
+      <input type="password" id="passwordInput" placeholder="••••••••" onkeypress="if(event.key==='Enter') doLogin()">
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Войти в систему</button>
+    <p style="text-align:center; color: var(--gray); font-size: 13px; margin-top: 16px;">
+      Доступ только для сотрудников. Регистрация — через администратора.
+    </p>
+  </div>
+</div>
+
+<!-- ОСНОВНОЙ ИНТЕРФЕЙС -->
+<div id="crmApp" style="display:none;">
+
+  <header>
+    <div class="logo-row">
+      <button class="burger" onclick="toggleSidebar()">☰</button>
+      <img src="https://i.ibb.co/6cqML3XD/image.jpg" alt="Здоровый баланс" class="logo-img">
+      <div class="logo-text">Здоровый <span>баланс</span></div>
+    </div>
+    <div class="user-info">
+      <span id="headerUserName">—</span>
+      <img id="headerUserAvatar" src="" alt="">
+      <button class="btn-header" onclick="logout()">Выйти</button>
+    </div>
+  </header>
+
+  <div class="crm-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-item active" data-page="orders" onclick="switchPage('orders', this)">
+        <span class="icon">📋</span> Заказы
+      </div>
+      <div class="sidebar-item" data-page="clients" onclick="switchPage('clients', this)" id="sidebarClients">
+        <span class="icon">👥</span> Клиенты
+      </div>
+      <div class="sidebar-item" data-page="messages" onclick="switchPage('messages', this)" id="sidebarMessages">
+        <span class="icon">💬</span> Сообщения
+      </div>
+      <div class="sidebar-item" data-page="staff" onclick="switchPage('staff', this)" id="sidebarStaff" style="display:none;">
+        <span class="icon">👤</span> Сотрудники
+      </div>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- РАЗДЕЛ: ЗАКАЗЫ -->
+      <div id="pageOrders" class="page-section">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">📋 Заказы</h1>
+            <p class="page-sub">Управление заказами клиентов — канбан-доска</p>
+          </div>
+          <button class="btn btn-primary" onclick="openOrderModal()">➕ Новый заказ</button>
+        </div>
+
+        <div class="kanban" id="kanbanBoard"></div>
+      </div>
+
+      <!-- РАЗДЕЛ: КЛИЕНТЫ -->
+      <div id="pageClients" class="page-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">👥 Клиенты</h1>
+            <p class="page-sub">База клиентов онлайн-школы</p>
+          </div>
+          <button class="btn btn-outline" onclick="exportClients()">📥 Выгрузить в CSV</button>
+        </div>
+        <div id="clientsList"></div>
+      </div>
+
+      <!-- РАЗДЕЛ: СООБЩЕНИЯ -->
+      <div id="pageMessages" class="page-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">💬 Сообщения</h1>
+            <p class="page-sub">Общение с клиентами (демо-режим ВК и МАХ)</p>
+          </div>
+        </div>
+        <div class="chat-layout">
+          <div class="chat-list" id="chatList"></div>
+          <div class="chat-window">
+            <div class="chat-messages" id="chatMessages">
+              <div class="empty-state">Выберите диалог слева</div>
+            </div>
+            <div class="chat-input-row">
+              <input type="text" id="chatInput" placeholder="Написать сообщение..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+              <button class="btn btn-primary" onclick="sendChatMessage()">Отправить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- РАЗДЕЛ: СОТРУДНИКИ -->
+      <div id="pageStaff" class="page-section" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">👤 Сотрудники</h1>
+            <p class="page-sub">Управление профилями сотрудников и правами доступа</p>
+          </div>
+          <button class="btn btn-primary" onclick="openStaffModal()">➕ Создать сотрудника</button>
+        </div>
+        <div id="staffList"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: НОВЫЙ/РЕДАКТИРОВАТЬ ЗАКАЗ -->
+<div id="orderModal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <h2 id="orderModalTitle">➕ Новый заказ</h2>
+      <button class="modal-close" onclick="closeOrderModal()">×</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Имя клиента *</label>
+        <input type="text" id="oClientName" placeholder="Иван Иванов">
+      </div>
+      <div class="form-group">
+        <label>Телефон *</label>
+        <input type="tel" id="oClientPhone" placeholder="+7 (___) ___-__-__">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="oClientEmail" placeholder="client@mail.ru">
+      </div>
+      <div class="form-group">
+        <label>Город</label>
+        <input type="text" id="oClientCity" placeholder="Москва">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Продукт (курс) *</label>
+        <select id="oProduct">
+          <option value="Курс «Правильное питание»">Курс «Правильное питание»</option>
+          <option value="Курс «Детокс 21 день»">Курс «Детокс 21 день»</option>
+          <option value="Курс «Спортивное питание»">Курс «Спортивное питание»</option>
+          <option value="Индивидуальная консультация">Индивидуальная консультация</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Сумма, ₽ *</label>
+        <input type="number" id="oAmount" placeholder="12000">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ответственный менеджер *</label>
+        <select id="oManager"></select>
+      </div>
+      <div class="form-group">
+        <label>Источник</label>
+        <select id="oSource">
+          <option value="ВК">ВКонтакте</option>
+          <option value="МАХ">МАХ</option>
+          <option value="Сайт">Сайт</option>
+          <option value="Телефон">Телефон</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Комментарий</label>
+      <textarea id="oComment" rows="2" placeholder="Комментарий по заказу..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveOrder()">💾 Сохранить</button>
+      <button class="btn btn-outline" onclick="closeOrderModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: КАРТОЧКА ЗАКАЗА -->
+<div id="orderDetailModal" class="modal-overlay">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <h2 id="detailTitle">Заказ</h2>
+      <button class="modal-close" onclick="closeOrderDetail()">×</button>
+    </div>
+    <div id="orderDetailContent"></div>
+    <div style="margin-top:24px; border-top: 2px solid var(--gray-light); padding-top: 20px;">
+      <h3 style="font-size:18px; margin-bottom:14px;">💬 Комментарии</h3>
+      <div id="orderComments"></div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <input type="text" id="newCommentInput" placeholder="Написать комментарий..." style="flex:1; padding:12px 16px; border:2px solid var(--gray-light); border-radius:10px; font-family:inherit; font-size:15px;">
+        <button class="btn btn-primary" onclick="addComment()">Отправить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: СОТРУДНИК -->
+<div id="staffModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="staffModalTitle">➕ Создать сотрудника</h2>
+      <button class="modal-close" onclick="closeStaffModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label>ФИО *</label>
+      <input type="text" id="sFullName" placeholder="Иванова Мария Петровна">
+    </div>
+    <div class="form-group">
+      <label>Логин *</label>
+      <input type="text" id="sLogin" placeholder="maria">
+    </div>
+    <div class="form-group">
+      <label>Пароль *</label>
+      <input type="text" id="sPassword" placeholder="пароль">
+    </div>
+    <div class="form-group">
+      <label>Роль *</label>
+      <select id="sRole">
+        <option value="staff">Сотрудник</option>
+        <option value="admin">Администратор</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Ссылка на аватар (imgbb)</label>
+      <input type="text" id="sAvatar" placeholder="https://i.ibb.co/...">
+    </div>
+    <div class="form-group">
+      <label>Права доступа к разделам</label>
+      <div class="permissions-grid">
+        <label class="perm-check"><input type="checkbox" id="permOrders" checked> Заказы</label>
+        <label class="perm-check"><input type="checkbox" id="permClients" checked> Клиенты</label>
+        <label class="perm-check"><input type="checkbox" id="permMessages" checked> Сообщения</label>
+        <label class="perm-check"><input type="checkbox" id="permReports"> Отчёты</label>
+        <label class="perm-check"><input type="checkbox" id="permStaff"> Сотрудники (админ)</label>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveStaff()">💾 Сохранить</button>
+      <button class="btn btn-outline" onclick="closeStaffModal()">Отмена</button>
+    </div>
+    <input type="hidden" id="editingStaffId" value="">
+  </div>
+</div>
+
+<!-- УВЕДОМЛЕНИЕ -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  /* ==================== SUPABASE ==================== */
+  const SUPABASE_URL = 'https://luwtyfddoenesnymxsmf.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1d3R5ZmRkb2VuZXNueW14c21mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2OTY0OTcsImV4cCI6MjEwNzI3MjQ5N30.9PZ8GNjZT1u-qfvFm9fFqGAo9gXj4yDnyDIg_VgRRJQ';
+
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  /* ==================== СОСТОЯНИЕ ==================== */
+  let currentUser = null;
+  let allOrders = [];
+  let allStaff = [];
+  let allClients = [];
+  let currentOrderId = null;
+  let currentChatClient = null;
+  let allMessages = [];
+
+  const STATUSES = [
+    { key: 'new', label: '🆕 Новый' },
+    { key: 'progress', label: '⚙️ В работе' },
+    { key: 'paid', label: '💰 Оплачен' },
+    { key: 'studying', label: '📚 Обучается' },
+    { key: 'done', label: '✅ Завершён' },
+    { key: 'cancelled', label: '❌ Отказ' }
+  ];
+
+  /* ==================== УТИЛИТЫ ==================== */
+  function esc(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function toast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => { t.className = 'toast ' + type; }, 3000);
+  }
+  function fmt(n) {
+    return (n || 0).toLocaleString('ru-RU') + ' ₽';
+  }
+  function timeAgo(date) {
+    const d = new Date(date);
+    return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  /* ==================== АВТОРИЗАЦИЯ ==================== */
+  async function doLogin() {
+    const login = document.getElementById('loginInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
+    if (!login || !password) { toast('Введите логин и пароль', 'error'); return; }
+
+    const { data, error } = await supabaseClient
+      .from('staff')
+      .select('*')
+      .eq('login', login)
+      .eq('password', password)
+      .maybeSingle();
+
+    if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+    if (!data) { toast('Неверный логин или пароль', 'error'); return; }
+
+    currentUser = data;
+    document.getElementById('loginInput').value = '';
+    document.getElementById('passwordInput').value = '';
+    toast('Добро пожаловать, ' + data.full_name + '!', 'success');
+    enterApp();
+  }
+
+  async function enterApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('crmApp').style.display = 'block';
+    document.getElementById('headerUserName').textContent = currentUser.full_name;
+    document.getElementById('headerUserAvatar').src = currentUser.avatar_url || 'https://i.ibb.co/rGGwJ0t0/image.jpg';
+
+    const perms = currentUser.permissions || {};
+    document.getElementById('sidebarClients').style.display = perms.clients ? 'flex' : 'none';
+    document.getElementById('sidebarMessages').style.display = perms.messages ? 'flex' : 'none';
+    document.getElementById('sidebarStaff').style.display = (currentUser.role === 'admin' || perms.staff) ? 'flex' : 'none';
+
+    await loadStaff();
+    await loadOrders();
+    await loadClients();
+    await loadMessages();
+    renderKanban();
+    switchPage('orders', document.querySelector('.sidebar-item'));
+  }
+
+  function logout() {
+    currentUser = null;
+    document.getElementById('crmApp').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    toast('Вы вышли из системы');
+  }
+
+  /* ==================== ПЕРЕКЛЮЧЕНИЕ РАЗДЕЛОВ ==================== */
+  function switchPage(page, el) {
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
+    const target = document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1));
+    if (target) target.style.display = 'block';
+    document.getElementById('sidebar').classList.remove('open');
+
+    if (page === 'orders') renderKanban();
+    if (page === 'clients') renderClients();
+    if (page === 'staff') renderStaff();
+    if (page === 'messages') renderChatList();
+  }
+
+  /* ==================== ЗАКАЗЫ ==================== */
+  async function loadOrders() {
+    const { data, error } = await supabaseClient.from('crm_orders').select('*').order('created_at', { ascending: false });
+    if (error) { console.error(error); return; }
+    allOrders = data || [];
+  }
+
+  async function renderKanban() {
+    const board = document.getElementById('kanbanBoard');
+    if (!board) return;
+    board.innerHTML = '';
+
+    for (const st of STATUSES) {
+      const orders = allOrders.filter(o => o.status === st.key);
+      const col = document.createElement('div');
+      col.className = 'kanban-col';
+      col.dataset.status = st.key;
+      col.innerHTML = `<h3>${st.label} <span class="count">${orders.length}</span></h3>`;
+
+      orders.forEach(o => {
+        const commentsCount = 0;
+        const card = document.createElement('div');
+        card.className = 'kanban-card';
+        card.draggable = true;
+        card.dataset.id = o.id;
+        card.onclick = () => openOrderDetail(o.id);
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+
+        const manager = allStaff.find(s => s.full_name === o.manager_name);
+        const avatarUrl = manager ? manager.avatar_url : 'https://i.ibb.co/rGGwJ0t0/image.jpg';
+
+        card.innerHTML = `
+          <div class="client">${esc(o.client_name)}</div>
+          <div class="product">${esc(o.product)}</div>
+          <div class="amount">${fmt(o.amount)}</div>
+          <div class="meta">
+            <div class="manager">
+              <img src="${esc(avatarUrl)}" class="avatar" alt="">
+              <span>${esc(o.manager_name || '—')}</span>
+            </div>
+          </div>
+        `;
+        col.appendChild(card);
+      });
+
+      col.addEventListener('dragover', handleDragOver);
+      col.addEventListener('drop', handleDrop);
+      board.appendChild(col);
+    }
+  }
+
+  let draggedOrderId = null;
+  function handleDragStart(e) {
+    draggedOrderId = e.target.dataset.id;
+    e.target.style.opacity = '0.5';
+  }
+  function handleDragEnd(e) {
+    e.target.style.opacity = '1';
+  }
+  function handleDragOver(e) { e.preventDefault(); }
+  async function handleDrop(e) {
+    e.preventDefault();
+    const newStatus = e.currentTarget.dataset.status;
+    if (!draggedOrderId || !newStatus) return;
+    const order = allOrders.find(o => o.id == draggedOrderId);
+    if (!order || order.status === newStatus) return;
+
+    order.status = newStatus;
+    const { error } = await supabaseClient.from('crm_orders').update({ status: newStatus }).eq('id', draggedOrderId);
+    if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+    toast('Статус изменён', 'success');
+    renderKanban();
+  }
+
+  /* ==================== КАРТОЧКА ЗАКАЗА ==================== */
+  async function openOrderDetail(id) {
+    currentOrderId = id;
+    const o = allOrders.find(x => x.id === id);
+    if (!o) return;
+
+    const statusMap = { new: 'Новый', progress: 'В работе', paid: 'Оплачен', studying: 'Обучается', done: 'Завершён', cancelled: 'Отказ' };
+
+    document.getElementById('detailTitle').textContent = 'Заказ · ' + o.client_name;
+    document.getElementById('orderDetailContent').innerHTML = `
+      <div class="form-row">
+        <div><strong>Клиент:</strong> ${esc(o.client_name)}</div>
+        <div><strong>Телефон:</strong> ${esc(o.client_phone)}</div>
+      </div>
+      <div class="form-row" style="margin-top:12px;">
+        <div><strong>Email:</strong> ${esc(o.client_email || '—')}</div>
+        <div><strong>Город:</strong> ${esc(o.client_city || '—')}</div>
+      </div>
+      <div class="form-row" style="margin-top:12px;">
+        <div><strong>Продукт:</strong> ${esc(o.product)}</div>
+        <div><strong>Сумма:</strong> ${fmt(o.amount)}</div>
+      </div>
+      <div class="form-row" style="margin-top:12px;">
+        <div><strong>Менеджер:</strong> ${esc(o.manager_name || '—')}</div>
+        <div><strong>Источник:</strong> ${esc(o.source || '—')}</div>
+      </div>
+      <div style="margin-top:12px;">
+        <strong>Статус:</strong>
+        <select id="detailStatus" onchange="changeStatusFromDetail()" style="margin-left:8px; padding:6px 12px; border:2px solid var(--gray-light); border-radius:8px; font-family:inherit;">
+          ${STATUSES.map(s => `<option value="${s.key}" ${o.status === s.key ? 'selected' : ''}>${statusMap[s.key]}</option>`).join('')}
+        </select>
+      </div>
+      ${o.comment ? `<div style="margin-top:12px;"><strong>Комментарий:</strong> ${esc(o.comment)}</div>` : ''}
+      <div style="margin-top:12px; color: var(--gray); font-size: 13px;">Создан: ${timeAgo(o.created_at)}</div>
+    `;
+
+    await loadComments();
+    document.getElementById('orderDetailModal').classList.add('active');
+  }
+
+  function closeOrderDetail() {
+    document.getElementById('orderDetailModal').classList.remove('active');
+    currentOrderId = null;
+  }
+
+  async function changeStatusFromDetail() {
+    const newStatus = document.getElementById('detailStatus').value;
+    const { error } = await supabaseClient.from('crm_orders').update({ status: newStatus }).eq('id', currentOrderId);
+    if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+    toast('Статус обновлён', 'success');
+    await loadOrders();
+    renderKanban();
+  }
+
+  /* ==================== КОММЕНТАРИИ ==================== */
+  async function loadComments() {
+    const block = document.getElementById('orderComments');
+    block.innerHTML = '<div style="color:var(--gray);">Загрузка...</div>';
+    const { data, error } = await supabaseClient.from('order_comments').select('*').eq('order_id', currentOrderId).order('created_at', { ascending: true });
+    if (error) { block.innerHTML = '<div style="color:var(--red);">Ошибка: ' + error.message + '</div>'; return; }
+    if (!data || data.length === 0) {
+      block.innerHTML = '<div style="color:var(--gray); padding: 12px 0;">Комментариев пока нет</div>';
+      return;
+    }
+    block.innerHTML = '';
+    data.forEach(c => {
+      const author = allStaff.find(s => s.full_name === c.author_name);
+      const avatar = author ? author.avatar_url : 'https://i.ibb.co/rGGwJ0t0/image.jpg';
+      const item = document.createElement('div');
+      item.className = 'comment-item';
+      item.innerHTML = `
+        <img src="${esc(avatar)}" alt="">
+        <div class="comment-body">
+          <div class="author">${esc(c.author_name)}<span class="time">${timeAgo(c.created_at)}</span></div>
+          <div class="text">${esc(c.text)}</div>
+        </div>
+      `;
+      block.appendChild(item);
+    });
+  }
+
+  async function addComment() {
+    const input = document.getElementById('newCommentInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const { error } = await supabaseClient.from('order_comments').insert({
+      order_id: currentOrderId,
+      author_id: currentUser.id,
+      author_name: currentUser.full_name,
+      text: text
+    });
+    if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+    input.value = '';
+    toast('Комментарий добавлен', 'success');
+    await loadComments();
+  }
+
+  /* ==================== СОЗДАНИЕ / РЕДАКТИРОВАНИЕ ЗАКАЗА ==================== */
+  function openOrderModal() {
+    document.getElementById('orderModalTitle').textContent = '➕ Новый заказ';
+    document.getElementById('oClientName').value = '';
+    document.getElementById('oClientPhone').value = '';
+    document.getElementById('oClientEmail').value = '';
+    document.getElementById('oClientCity').value = '';
+    document.getElementById('oAmount').value = '';
+    document.getElementById('oComment').value = '';
+    document.getElementById('oSource').value = 'ВК';
+
+    const sel = document.getElementById('oManager');
+    sel.innerHTML = '';
+    allStaff.forEach(s => {
+      sel.innerHTML += `<option value="${esc(s.full_name)}" ${s.full_name === currentUser.full_name ? 'selected' : ''}>${esc(s.full_name)}</option>`;
+    });
+
+    document.getElementById('orderModal').classList.add('active');
+  }
+  function closeOrderModal() {
+    document.getElementById('orderModal').classList.remove('active');
+  }
+
+  async function saveOrder() {
+    const name = document.getElementById('oClientName').value.trim();
+    const phone = document.getElementById('oClientPhone').value.trim();
+    const product = document.getElementById('oProduct').value;
+    const amount = parseInt(document.getElementById('oAmount').value);
+    const manager_name = document.getElementById('oManager').value;
+
+    if (!name || !phone || !amount) { toast('Заполните обязательные поля', 'error'); return; }
+
+    const { error } = await supabaseClient.from('crm_orders').insert({
+      client_name: name,
+      client_phone: phone,
+      client_email: document.getElementById('oClientEmail').value.trim(),
+      client_city: document.getElementById('oClientCity').value.trim(),
+      product: product,
+      amount: amount,
+      status: 'new',
+      manager_name: manager_name,
+      source: document.getElementById('oSource').value,
+      comment: document.getElementById('oComment').value.trim()
+    });
+
+    if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+    toast('Заказ создан', 'success');
+    closeOrderModal();
+    await loadOrders();
+    renderKanban();
+  }
+
+  /* ==================== КЛИЕНТЫ ==================== */
+  async function loadClients() {
+    const { data, error } = await supabaseClient.from('crm_clients').select('*').order('created_at', { ascending: false });
+    if (error) { console.error(error); return; }
+    allClients = data || [];
+  }
+
+  function renderClients() {
+    const list = document.getElementById('clientsList');
+    if (!list) return;
+    if (allClients.length === 0) {
+      list.innerHTML = '<div class="empty-state">Клиентов пока нет</div>';
+      return;
+    }
+    list.innerHTML = '';
+    allClients.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <div class="info">
+          <h4>${esc(c.name)}</h4>
+          <p>📞 ${esc(c.phone || '—')} · ✉️ ${esc(c.email || '—')}</p>
+          <p>📍 ${esc(c.city || '—')} · Заказов: ${c.orders_count} · На сумму: ${fmt(c.total_spent)}</p>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function exportClients() {
+    const rows = [['Имя', 'Телефон', 'Email', 'Город', 'Заказов', 'Сумма']];
+    allClients.forEach(c => {
+      rows.push([c.name, c.phone || '', c.email || '', c.city || '', c.orders_count || 0, c.total_spent || 0]);
+    });
+    const csv = rows.map(r => r.map(x => `"${x}"`).join(';')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'clients_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Клиенты выгружены в CSV', 'success');
+  }
+
+  /* ==================== СОТРУДНИКИ ==================== */
+  async function loadStaff() {
+    const { data, error } = await supabaseClient.from('staff').select('*').order('created_at', { ascending: true });
+    if (error) { console.error(error); return; }
+    allStaff = data || [];
+  }
+
+  function renderStaff() {
+    const list = document.getElementById('staffList');
+    if (!list) return;
+    list.innerHTML = '';
+    allStaff.forEach(s => {
+      const perms = s.permissions || {};
+      const permLabels = [];
+      if (perms.orders) permLabels.push('Заказы');
+      if (perms.clients) permLabels.push('Клиенты');
+      if (perms.messages) permLabels.push('Сообщения');
+      if (perms.reports) permLabels.push('Отчёты');
+      if (perms.staff) permLabels.push('Сотрудники');
+
+      const roleLabel = s.role === 'admin' ? 'Администратор' : 'Сотрудник';
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <div class="info" style="display:flex; align-items:center; gap:14px;">
+          <img src="${esc(s.avatar_url || 'https://i.ibb.co/rGGwJ0t0/image.jpg')}" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div>
+            <h4>${esc(s.full_name)} ${s.role === 'admin' ? '👑' : ''}</h4>
+            <p>Логин: <b>${esc(s.login)}</b> · ${roleLabel}</p>
+            <p>Права: ${permLabels.join(', ') || '—'}</p>
+          </div>
+        </div>
+        <div class="controls">
+          ${s.login !== 'admin111' ? `<button class="btn btn-sm btn-danger" onclick="deleteStaff(${s.id})">🗑 Удалить</button>` : '<span style="color:var(--gray); font-size:13px;">Главный админ</span>'}
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function openStaffModal() {
+    document.getElementById('staffModalTitle').textContent = '➕ Создать сотрудника';
+    document.getElementById('sFullName').value = '';
+    document.getElementById('sLogin').value = '';
+    document.getElementById('sPassword').value = '';
+    document.getElementById('sAvatar').value = '';
+    document.getElementById('sRole').value = 'staff';
+    document.getElementById('permOrders').checked = true;
+    document.getElementById('permClients').checked = true;
+    document.getElementById('permMessages').checked = true;
+    document.getElementById('permReports').checked = false;
+    document.getElementById('permStaff').checked = false;
+    document.getElementById('editingStaffId').value = '';
+    document.getElementById('staffModal').classList.add('active');
+  }
+  function closeStaffModal() {
+    document.getElementById('staffModal').classList.remove('active');
+  }
+
+  async function saveStaff() {
+    if (currentUser.role !== 'admin') { toast('Только администратор может создавать сотрудников', 'error'); return; }
+
+    const full_name = document.getElementById('sFullName').value.trim();
+    const login = document.getElementById('sLogin').value.trim();
+    const password = document.getElementById('sPassword').value.trim();
+    const role = document.getElementById('sRole').value;
+    const avatar_url = document.getElementById('sAvatar').value.trim();
+
+    if (!full_name || !login || !password) { toast('Заполните все обязательные поля', 'error'); return; }
+
+    const permissions = {
+      orders: document.getElementById('permOrders').checked,
+      clients: document.getElementById('permClients').checked,
+      messages: document.getElementById('permMessages').checked,
+      reports: document.getElementById('permReports').checked,
+      staff: document.getElementById('permStaff').checked
+    };
+
+    const { error } = await supabaseClient.from('staff').insert({
+      full_name, login, password, role, permissions,
+      avatar_url: avatar_url || 'https://i.ibb.co/rGGwJ0t0/image.jpg'
+    });
+
+    if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+    toast('Сотрудник создан', 'success');
+    closeStaffModal();
+    await loadStaff();
+    renderStaff();
+  }
+
+  async function deleteStaff(id) {
+    if (!confirm('Удалить сотрудника?')) return;
+    const { error } = await supabaseClient.from('staff').delete().eq('id', id);
+    if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+    toast('Сотрудник удалён', 'success');
+    await loadStaff();
+    renderStaff();
+  }
+
+  /* ==================== СООБЩЕНИЯ (ДЕМО ВК, МАХ) ==================== */
+  async function loadMessages() {
+    const { data, error } = await supabaseClient.from('crm_messages').select('*').order('created_at', { ascending: true });
+    if (error) { console.error(error); return; }
+    allMessages = data || [];
+  }
+
+  function renderChatList() {
+    const list = document.getElementById('chatList');
+    if (!list) return;
+
+    const demoChats = [
+      { client_name: 'Мария Иванова', channel: 'vk' },
+      { client_name: 'Дмитрий Соколов', channel: 'max' },
+      { client_name: 'Ольга Кузнецова', channel: 'vk' }
+    ];
+
+    list.innerHTML = '';
+    demoChats.forEach(c => {
+      const lastMsg = allMessages.filter(m => m.client_name === c.client_name).slice(-1)[0];
+      const item = document.createElement('div');
+      item.className = 'chat-list-item' + (currentChatClient === c.client_name ? ' active' : '');
+      item.onclick = () => openChat(c.client_name);
+      item.innerHTML = `
+        <div class="name">${esc(c.client_name)}</div>
+        <div class="last-msg">${lastMsg ? esc(lastMsg.text.substring(0, 40)) + '...' : 'Нет сообщений'}</div>
+        <div class="channel">${c.channel === 'vk' ? '🔵 ВКонтакте' : '🟣 МАХ'}</div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function openChat(clientName) {
+    currentChatClient = clientName;
+    renderChatList();
+    renderChatMessages();
+  }
+
+  function renderChatMessages() {
+    const box = document.getElementById('chatMessages');
+    if (!box) return;
+    if (!currentChatClient) {
+      box.innerHTML = '<div class="empty-state">Выберите диалог слева</div>';
+      return;
+    }
+    const msgs = allMessages.filter(m => m.client_name === currentChatClient);
+    if (msgs.length === 0) {
+      box.innerHTML = '<div class="empty-state">Сообщений пока нет. Напишите первым!</div>';
+      return;
+    }
+    box.innerHTML = '';
+    msgs.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'chat-msg ' + m.direction;
+      div.textContent = m.text;
+      box.appendChild(div);
+    });
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function sendChatMessage() {
+    if (!currentChatClient) { toast('Выберите диалог', 'error'); return; }
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const chat = allMessages.find(m => m.client_name === currentChatClient);
+    const channel = chat ? chat.channel : 'vk';
+
+    const { error } = await supabaseClient.from('crm_messages').insert({
+      client_name: currentChatClient,
+      channel: channel,
+      text: text,
+      direction: 'out'
+    });
+    if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+    input.value = '';
+    await loadMessages();
+    renderChatMessages();
+  }
+
+  /* ==================== АНИМАЦИИ ==================== */
+  function initReveal() {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal:not(.active)').forEach(el => obs.observe(el));
+  }
+
+  /* ==================== СТАРТ ==================== */
+  window.addEventListener('DOMContentLoaded', () => {
+    initReveal();
+  });
+</script>
+
+</body>
+</html>
